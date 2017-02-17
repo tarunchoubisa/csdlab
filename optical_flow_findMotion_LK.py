@@ -41,7 +41,7 @@ old_gray = cv2.cvtColor(old_frame, cv2.COLOR_BGR2GRAY)
 p0 = cv2.goodFeaturesToTrack(old_gray, mask = None, **feature_params)
 print 'p0' + str(p0)
 p0s =  p0.shape
-p0std=p0s[0]-1
+p0std=p0s[0]-11
 #p0d=np.delete(p0,(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46),axis=0)
 #p0d=np.delete(p0,(0,1,2,3,4),axis=0)
 p0d=np.delete(p0,np.arange(p0std),axis=0)
@@ -55,8 +55,8 @@ h=173
 
  # Puting our own features in 2 rows 
 
-#np.put(p0df, [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21], [9,375,18,375,36,375,72,375,144,375,288,375,480,375,9,h,27,h,75,h,210,h])
-np.put(p0df,[0,1],[375,375])
+np.put(p0df, [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21], [9,375,18,375,36,375,72,375,144,375,288,375,480,375,9,h,27,h,75,h,210,h])
+#np.put(p0df,[0,1],[375,375])
 #print p0df
 #print p0df.shape
 p0dfr=p0df.reshape(p0ds[0],p0ds[1],p0ds[2])
