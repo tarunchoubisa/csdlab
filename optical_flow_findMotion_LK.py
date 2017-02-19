@@ -103,7 +103,9 @@ while(1):
     if count_flag==1:
       a_init=a
       b_init=b
-    elif count_flag==
+    elif count_flag==100
+      a_final=a
+      b_final=b
        
   img = cv2.add(frame,mask)
   cv2.imshow('frame',img)
