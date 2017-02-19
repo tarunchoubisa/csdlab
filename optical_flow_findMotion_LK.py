@@ -94,6 +94,10 @@ while(1):
 
 ########################################################### draw the tracks
   count_flag=count_flag+1 
+  a_init=[]
+  b_init=[]
+  a_final=[]
+  b_final=[]     
   for i,(new,old) in enumerate(zip(good_new,good_old)): # this syntax allows to take the elements of good_new  in variable new and old
     #print enumerate(zip(good_new,good_old))
     a,b = new.ravel() # it returns the flattened array, this is the coordinate corresponding to good_new points
@@ -101,11 +105,11 @@ while(1):
     cv2.line(mask, (a,b),(c,d), color[i].tolist(), 2)
     cv2.circle(frame,(a,b),5,color[i].tolist(),-1)
     if count_flag==1:
-      a_init=a
-      b_init=b
+      a_init[i]=a
+      b_init[i]=b
     elif count_flag==100:
-      a_final=a
-      b_final=b
+      a_final[i]=a
+      b_final[i]=b
        
   img = cv2.add(frame,mask)
   cv2.imshow('frame',img)
