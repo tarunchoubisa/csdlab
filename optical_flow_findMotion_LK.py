@@ -66,7 +66,7 @@ p0dfr=p0df.reshape(p0ds[0],p0ds[1],p0ds[2]) # reshaping the array to multi-dimen
 #exit() 
 #print p0.ndim
 #p0dfrs=np.vstack((p0,p0dfr))
-p0dfrs=p0dfr # helpful when new point location will  be estimated by optical flow and line has to be drawn between old and new
+p0dfrs=p0dfr # old points, helpful when new point location will  be estimated by optical flow and line has to be drawn between old and new
 
 ############################### Create a mask image for drawing purposes
 
@@ -103,7 +103,7 @@ while(1):
     if count_flag==1:
       a_init=a
       b_init=b
-    elif count_flag==100
+    elif count_flag==100:
       a_final=a
       b_final=b
        
