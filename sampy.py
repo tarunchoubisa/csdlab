@@ -27,6 +27,7 @@ color = np.random.randint(0,255,(100,3))
 # Create a mask image for drawing purposes
 mask = np.zeros_like(frame)
 
+'''
 ys = range(height/4,height - height/4+1,height/2/3)
 #ys = range(120,361,80)
 xs = [width/2]*4
@@ -34,9 +35,11 @@ print height,width
 
 #mask = cv2.cvtColor(mask,cv2.COLOR_BGR2GRAY)
 p0 = zip(ys,xs)
-p0 = np.array(p0)
+p0 = np.array(map(lambda p:[map(lambda a:float(a),p)],p0))
+print p0.shape
 
 #print p0
+'''
 
 '''for p in p0:
 	mask[p] = 250
@@ -46,6 +49,14 @@ while True:
 	if cv2.waitKey(1) & 0xff == ord('q'):break
 '''
 
+# Take first frame and find corners in it
+ret, old_frame = c.read()
+old_gray = cv2.cvtColor(old_frame, cv2.COLOR_BGR2GRAY)
+p0 = cv2.goodFeaturesToTrack(old_gray, mask = None, **feature_params)
+p0 = p0[:4]
+#print p0.shape
+
+#exit()
 
 while True:
   s,f = c.read()
@@ -55,7 +66,7 @@ while True:
   #p1 = p1[st==1]
   #p0 = p0[st==1]
 
-  #print p0,p1
+  print p0,p1
 
   cv2.imshow("frame",f)
 
