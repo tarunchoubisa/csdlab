@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-
+# hi how areyou 
 
 c = cv2.VideoCapture(0)
 
