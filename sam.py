@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
-# hi how areyou 
+# hi how areyou
 #iam just okay
+# another hi comment
 c = cv2.VideoCapture(0)
 
 for x in range(20):c.read()
