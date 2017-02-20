@@ -159,6 +159,7 @@ while(1):
       else:
         DiffLowerSum = DiffLowerSum + sum(diff[j][:])
     count_flag=0
+    mask.fill(0)
     print 'DiffUpperSum		' + str(DiffUpperSum) + '	DiffLowerSum	' + str(DiffLowerSum) + '\n'
     #print 'points_final' + str(points_final)
     points_init.fill(0)
