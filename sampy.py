@@ -63,8 +63,8 @@ while True:
   frame_gray = cv2.cvtColor(f,cv2.COLOR_BGR2GRAY)
   p1, st, err = cv2.calcOpticalFlowPyrLK(old_gray, frame_gray, p0, None, **lk_params)
   old_gray = frame_gray.copy()
-  #p1 = p1[st==1]
-  #p0 = p0[st==1]
+  p1 = p1[st==1]
+  p0 = p0[st==1]
 
   print p0,p1
 
