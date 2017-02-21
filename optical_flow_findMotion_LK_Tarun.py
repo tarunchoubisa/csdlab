@@ -128,7 +128,10 @@ while(1):
 
   p1, st, err = cv2.calcOpticalFlowPyrLK(old_gray, frame_gray, p0dfrs, None, **lk_params) # st==1 denotes the good points(traceable)
   # p1 are new estimated points
-    
+  print sum(st)
+  if sum(st)<8:
+    p0dfrs = p0dfr
+    continue
 # Select new good point coordinates and their corresponding old locations to draw the line
   #print 'p1-type: ' + str(type(p1))
   p1s=p1.shape
