@@ -1,8 +1,15 @@
 import numpy as np
 import cv2
 import time
+import sys
+if len(sys.argv)>1:
+  camera_id=1
+else:
+  camera_id=0;# 0 for laptop camera, 1 for an external camera 
 
-camera_id=0;# 0 for laptop camera, 1 for an external camera 
+print camera_id
+#raw_input()
+
 ix,iy = -1,-1
 # mouse callback function
 def draw_circle(event,x,y,flags,param):
@@ -29,6 +36,7 @@ color = np.random.randint(0,255,(100,3))
  
  # Take first frame and find corners in it
 for i in range(200):
+  cap.read()
   print 'wait'
 print 'AttributeError: NoneType object has no attribute shape, then check the camera_id in the begining'  
 ret, old_frame = cap.read()
@@ -62,10 +70,26 @@ h=173
  # Puting our own features in the form of 1D array, first vector is the index, second vector has the points in the form of pairs 
 # later this 1D array will be reshaped to a 2D array (if 11 points are left, then it will have 22 numbers)
 #np.put(p0df, [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21], [9,375,18,375,36,375,72,375,144,375,288,375,480,375,9,h,27,h,75,h,210,h])
-np.put(p0df,[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],[160,100,160,200,320,100,320,200,160,300,160,400,320,300,320,400])
+#########np.put(p0df,[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],[160,100,160,200,320,100,320,200,160,300,160,400,320,300,320,400])
 #np.put(p0df,[0,1,2,3],[160,80,160,320]) # first half is upper (x,y), y starts from the top
 #print p0df.shape
-p0dfr=p0df.reshape(p0ds[0],p0ds[1],p0ds[2]) # reshaping the array to multi-dimensional array 
+p0df = p0df[:1]
+xtemp = p0df[0]
+for x in range(16):
+  p0df=np.append(p0df,xtemp)
+
+
+
+p0df= p0df[1:]
+xsize=len(p0df)
+
+np.put(p0df,[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],[160,100,160,200,320,100,320,200,160,300,160,400,320,300,320,400])
+
+
+#p0dfr=p0df.reshape(p0ds[0],p0ds[1],p0ds[2]) # reshaping the array to multi-dimensional array 
+p0dfr=p0df.reshape(xsize/2,1,2) # reshaping the array to multi-dimensional array 
+
+
 #print 'p0dfr'+ str(p0dfr)
 #print 'p0dfr_shape' + str(p0dfr.shape)
 #exit() 
@@ -165,9 +189,9 @@ while(1):
     points_init.fill(0)
     points_final.fill(0)
     if DiffUpperSum>1000 and DiffLowerSum>1000:
-      print 'Human Detected'
+      print "--------------------------------------------"*2,'Human Detected'
     elif DiffLowerSum>1000:
-      print 'Animal Detected'
+      print '--------------------------------------------'*2,'Animal Detected'
     p0dfrs=p0dfr
     DiffUpperSum=0
     DiffLowerSum=0
