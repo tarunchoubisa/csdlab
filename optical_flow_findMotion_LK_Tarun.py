@@ -35,7 +35,7 @@ lk_params = dict( winSize  = (15,15),
 color = np.random.randint(0,255,(100,3))
  
  # Take first frame and find corners in it
-for i in range(200):
+for i in range(50):
   cap.read()
   print 'wait'
 print 'AttributeError: NoneType object has no attribute shape, then check the camera_id in the begining'  
