@@ -25,28 +25,6 @@ color = np.random.randint(0,255,(100,3))
 # Create a mask image for drawing purposes
 mask = np.zeros_like(frame)
 
-'''
-#ys = range(height/4,height - height/4+1,height/2/3)
-#ys = range(120,361,80)
-#xs = [width/2]*4
-print height,width
-
-#mask = cv2.cvtColor(mask,cv2.COLOR_BGR2GRAY)
-#p0 = zip(ys,xs)
-#p0 = np.array(map(lambda p:[map(lambda a:float(a),p)],p0))
-#print p0.shape
-
-#print p0
-'''
-
-'''for p in p0:
-	mask[p] = 250
-
-while True:
-	cv2.imshow('mask',mask)
-	if cv2.waitKey(1) & 0xff == ord('q'):break
-'''
-
 # Take first frame and find corners in it
 ret, old_frame = cap.read()
 old_gray = cv2.cvtColor(old_frame, cv2.COLOR_BGR2GRAY)
@@ -58,20 +36,21 @@ p0 = p0[:1]
 for x in range(3):
   p0=np.append(p0,xtemp)
 
+p0_backup = np.copy(p0)
 
-p0[1],p0[0] = height/4,width/2
-p0[3],p0[2] = height/4+height/2/3,width/2
-p0[5],p0[4] = height/4+(2*height/2/3),width/2
-p0[7],p0[6] = height/4+(3*height/2/3),width/2
+def init_points():
+  global p0
+  p0=p0_backup
+  #fill points if less than 4
+  p0[1],p0[0] = height/4,width/2
+  p0[3],p0[2] = height/4+height/2/3,width/2
+  p0[5],p0[4] = height/4+(2*height/2/3),width/2
+  p0[7],p0[6] = height/4+(3*height/2/3),width/2
 
-#p0 = np.array([float(100)]*8)
-p0=p0.reshape(4,1,2)
-#print 'p0_shape' + str(p0.shape)
-#print 'p0' + str(p0)
+  p0=p0.reshape(4,1,2)
 
 
-
-#exit()
+init_points()
 
 while True:
   s1,f1 = cap.read()
@@ -80,11 +59,21 @@ while True:
   p1, st, err = cv2.calcOpticalFlowPyrLK(old_gray, frame_gray, p0, None, **lk_params)
   old_gray = frame_gray.copy()
 
+  nDetectedpoints=sum(st)
+  print nDetectedpoints
+
+  if nDetectedpoints<4:
+    print "--------->","reinit p0"
+    mask = np.zeros_like(frame)
+    init_points()
+
+    continue
+
   p1_new = p1[st==1]
   p0_old = p0[st==1]
 
-  print 'p0' + str(p1)
-  print 'st' + str(st)
+  #print 'p0' + str(p1)
+  #print 'st' + str(st)
   #exit()
 
   #cv2.imshow("frame",frame)
