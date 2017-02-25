@@ -36,17 +36,17 @@ p0 = p0[:1]
 for x in range(3):
   p0=np.append(p0,xtemp)
 
+p0[1],p0[0] = height/4,width/2
+p0[3],p0[2] = height/4+height/2/3,width/2
+p0[5],p0[4] = height/4+(2*height/2/3),width/2
+p0[7],p0[6] = height/4+(3*height/2/3),width/2
+
 p0_backup = np.copy(p0)
 
 def init_points():
   global p0
   p0=p0_backup
   #fill points if less than 4
-  p0[1],p0[0] = height/4,width/2
-  p0[3],p0[2] = height/4+height/2/3,width/2
-  p0[5],p0[4] = height/4+(2*height/2/3),width/2
-  p0[7],p0[6] = height/4+(3*height/2/3),width/2
-
   p0=p0.reshape(4,1,2)
 
 
