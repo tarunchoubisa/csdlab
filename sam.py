@@ -42,6 +42,7 @@ p0[5],p0[4] = height/4+(2*height/2/3),width/2
 p0[7],p0[6] = height/4+(3*height/2/3),width/2
 
 p0_backup = np.copy(p0)
+mask_blank = np.copy(mask)
 
 def init_points():
   global p0
@@ -51,8 +52,18 @@ def init_points():
 
 
 init_points()
+frame_count=0
 
 while True:
+  frame_count=frame_count+1
+
+  if frame_count>=20:
+    init_points()
+    mask = np.copy(mask_blank)
+    frame_count=0
+    continue
+
+
   s1,f1 = cap.read()
   s,frame = cap.read()
   frame_gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
@@ -64,9 +75,8 @@ while True:
 
   if nDetectedpoints<4:
     print "--------->","reinit p0"
-    mask = np.zeros_like(frame)
+    mask = np.copy(mask_blank)
     init_points()
-
     continue
 
   p1_new = p1[st==1]
@@ -91,5 +101,5 @@ while True:
   if cv2.waitKey(1) & 0xff == ord('q'):break
 
 
-c.release()
+cap.release()
 cv2.destroyAllWindows()
