@@ -7,6 +7,7 @@ if len(sys.argv)>1:
   camera_id=1
 else:
   camera_id=0# 0 for laptop camera, 1 for an external camera 
+debug_flag=0
 #camera_id=1
 #print camera_id
 #raw_input()
@@ -66,9 +67,11 @@ def initialization(camera_id):
 
 def read_a_gray_image(cap):
   #Take first frame and find corners in it
-  print 'going to read from cap'
+  if debug_flag==1:
+  	print 'going to read from cap'
   ret, old_frame = cap.read()
-  print 'ret' + str(ret)
+  if debug_flag==1:
+  	print 'ret' + str(ret)
   #cv2.imshow('test',old_frame)
   #print type(old_frame)
   #height, width, channel = old_frame.shape
@@ -139,10 +142,10 @@ def reinitialize_if_less_active(st,p0df):
   #print 'sum_st' + str(sum(st))
   global p0dfrs, count_flag, mask
   all_not_active=0
-  if sum(st)<8:
+  if sum(st)<5:
     p0dfr=update_initial_points(p0df) # update the initial points 
     p0dfrs = p0dfr
-    #print 'sum_st' + str(sum(st))
+    print 'reinitialization loop sum_st' + str(sum(st))
     #print 'p0dfrs-shape' + str(p0dfrs)
     all_not_active=1
     count_flag=0
@@ -260,6 +263,7 @@ while(1):
   #toc=current_milli_time()
   #exact_time=toc-tic
   get_distance_lower_upper_half(p0dfr)
+  print "came to an end"
   k = cv2.waitKey(30) & 0xff
   if k == 27:
     break
