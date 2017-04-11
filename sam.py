@@ -1,9 +1,22 @@
 import cv2
+import sys
 import numpy as np
-camera_id=0
+import datetime
+
+
+camera_id=sys.argv[1]
+
+try:
+  camera_id = int(camera_id)
+except:
+  pass
+
+
 cap = cv2.VideoCapture(camera_id)
-for x in range(20):
+
+for x in range(50):
   cap.read()
+
 s,frame = cap.read()
 old_gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
 
@@ -43,6 +56,8 @@ p0[7],p0[6] = height/4+(3*height/2/3),width/2
 
 p0_backup = np.copy(p0)
 mask_blank = np.copy(mask)
+p0_backup_preshaped = p0_backup.reshape(4,1,2)
+
 
 def init_points():
   global p0
@@ -50,6 +65,19 @@ def init_points():
   #fill points if less than 4
   p0=p0.reshape(4,1,2)
 
+
+Human=1
+Animal=-1
+Alldetections=[]
+
+def classfier(dA,dB,dC,dD):
+  if dA+dB+dC+dD > 3000:
+    if dA + dB > 700:
+      print "--------->Human",datetime.datetime.now()
+      Alldetections.append(Human)
+    else:
+      print "=========>Animal",datetime.datetime.now()
+      Alldetections.append(Animal)
 
 init_points()
 frame_count=0
@@ -61,17 +89,29 @@ while True:
     init_points()
     mask = np.copy(mask_blank)
     frame_count=0
+
+    if len(Alldetections)<3:
+    	continue
+    	
+    if sum(Alldetections)==0:
+    	pass
+    elif sum(Alldetections)>0:
+    	print ".................................. human"
+    else:
+    	print ".................................. animal"
+
+    Alldetections=[]
+    
     continue
 
-
-  s1,f1 = cap.read()
+  
   s,frame = cap.read()
   frame_gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
   p1, st, err = cv2.calcOpticalFlowPyrLK(old_gray, frame_gray, p0, None, **lk_params)
   old_gray = frame_gray.copy()
 
   nDetectedpoints=sum(st)
-  print nDetectedpoints
+  #print nDetectedpoints==4
 
   if nDetectedpoints<4:
     print "--------->","reinit p0"
@@ -95,6 +135,17 @@ while True:
     cv2.circle(frame,(a,b),5,color[i].tolist(),-1)
     img = cv2.add(frame,mask)
     cv2.imshow('frame',img)
+
+  dist=(p1-p0_backup_preshaped)
+  dist = dist*dist
+  
+  distA = sum(dist[0][0])
+  distB = sum(dist[1][0])
+  distC = sum(dist[2][0])
+  distD = sum(dist[3][0])
+
+  classfier(distA,distB,distC,distD)
+
 
   p0 = p1_new.reshape(len(p1_new.reshape(-1))/2,1,2)
 
