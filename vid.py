@@ -1,7 +1,7 @@
 #import numpy as np
 from time import sleep
 
-import os,subprocess
+import os,subprocess,sys
 
 files = os.listdir("videos")
 print "\n".join(files)
@@ -9,7 +9,7 @@ print "\n".join(files)
 
 for file in files:
 
-	cmd = "xterm -e python " + os.getcwd() +  "/sam.py " + os.getcwd() + "/videos/" + file
+	cmd = "xterm -e python " + os.getcwd() +  "/" + sys.argv[1] + " " + os.getcwd() + "/videos/" + file
 	print cmd
 	#raw_input()
 	try:
