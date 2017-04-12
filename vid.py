@@ -17,6 +17,8 @@ for file in files:
 	except:
 		pass
 		sleep(3)
+
+	#raw_input()
 	
 
 

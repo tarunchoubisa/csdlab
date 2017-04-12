@@ -69,6 +69,7 @@ def init_points():
 Human=1
 Animal=-1
 Alldetections=[]
+decisionFrameCount=0
 
 def classfier(dA,dB,dC,dD):
   if dA+dB+dC+dD > 3000:
@@ -84,11 +85,20 @@ frame_count=0
 
 while True:
   frame_count=frame_count+1
+  decisionFrameCount=decisionFrameCount+1
 
   if frame_count>=20:
     init_points()
     mask = np.copy(mask_blank)
     frame_count=0
+
+
+
+    if decisionFrameCount<=40:
+    	continue
+    else:
+    	decisionFrameCount=0
+    	pass
 
     if len(Alldetections)<3:
     	continue
