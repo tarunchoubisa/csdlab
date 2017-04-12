@@ -74,10 +74,16 @@ def init_points():
 
 Human=1
 Animal=-1
-Alldetections=[]
+Alldetections1=[]
+Alldetections2=[]
 decisionFrameCount=0
 
-def classfier(dA,dB,dC,dD):
+def classfier(dA,dB,dC,dD,column=1):
+  if column==1:
+  	Alldetections=Alldetections1
+  else:
+  	Alldetections=Alldetections2
+
   if dA+dB+dC+dD > 3000:
     if dA + dB > 700:
       print "--------->Human",datetime.datetime.now()
@@ -88,6 +94,8 @@ def classfier(dA,dB,dC,dD):
 
 init_points()
 frame_count=0
+
+
 
 while True:
   frame_count=frame_count+1
@@ -166,10 +174,10 @@ while True:
   distC2 = sum(dist[6][0])
   distD2 = sum(dist[7][0])
 
-  distA = distA2
-  distB = distB2
-  distC = distC2
-  distD = distD2
+  distA = distA2 + distA1
+  distB = distB2 + distB1
+  distC = distC2 + distC1
+  distD = distD2 + distD1
 
   classfier(distA,distB,distC,distD)
 
