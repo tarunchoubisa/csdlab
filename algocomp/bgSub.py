@@ -59,7 +59,7 @@ while 1:
 	print " ", 1/timeelapsed ,"",
 	print resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
    
-	if cv2.waitKey(1) & 0xff == ord('q'):
+	if cv2.waitKey(30) & 0xff == ord('q'):
 		break
 
 
