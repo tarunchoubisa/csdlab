@@ -26,7 +26,9 @@ while 1:
 	 
 	diff=cv2.absdiff(lastframe,frame)
 	
-	cv2.imshow("window name",diff)
+    ret,thresh = cv2.threshold(diff,127,255,cv2.THRESH_BINARY)
+
+	cv2.imshow("window name",frame)
 
 
 	if cv2.waitKey(1) & 0xff == ord('q'):
