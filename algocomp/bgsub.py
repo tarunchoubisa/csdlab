@@ -1,6 +1,7 @@
 import cv2 
 
 import sys
+import time
 
 cam_source = sys.argv[1]
 
@@ -19,7 +20,15 @@ for x in range(20):
 status,lastframe=camera.read()
 lastframe = cv2.cvtColor(lastframe,cv2.COLOR_BGR2GRAY)
 
+past = time.time()
+
 while 1:
+	present = time.time()
+	timeelapsed=present-past
+	past = present
+
+	print 1/timeelapsed
+
 	status,frame=camera.read()
 
 	frame = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
