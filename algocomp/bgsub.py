@@ -25,10 +25,10 @@ while 1:
 	frame = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
 	 
 	diff=cv2.absdiff(lastframe,frame)
-	
-    ret,thresh = cv2.threshold(diff,127,255,cv2.THRESH_BINARY)
 
-	cv2.imshow("window name",frame)
+	ret,thresh = cv2.threshold(diff,50,255,cv2.THRESH_BINARY)
+
+	cv2.imshow("window name",thresh)
 
 
 	if cv2.waitKey(1) & 0xff == ord('q'):
