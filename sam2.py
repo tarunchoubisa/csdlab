@@ -76,7 +76,12 @@ Human=1
 Animal=-1
 Alldetections1=[]
 Alldetections2=[]
+Alldetections=[]
+
+GlobalColumn=1
 decisionFrameCount=0
+
+
 
 def classfier(dA,dB,dC,dD,column=1):
   if column==1:
@@ -92,9 +97,10 @@ def classfier(dA,dB,dC,dD,column=1):
       print "=========>Animal",datetime.datetime.now()
       Alldetections.append(Animal)
 
+
+
 init_points()
 frame_count=0
-
 
 
 while True:
@@ -106,8 +112,6 @@ while True:
     mask = np.copy(mask_blank)
     frame_count=0
 
-
-
     if decisionFrameCount<=40:
     	continue
     else:
@@ -116,7 +120,7 @@ while True:
 
     if len(Alldetections)<3:
     	continue
-    	
+
     if sum(Alldetections)==0:
     	pass
     elif sum(Alldetections)>0:
@@ -125,10 +129,10 @@ while True:
     	print ".................................. animal"
 
     Alldetections=[]
-    
+
     continue
 
-  
+
   s,frame = cap.read()
   frame_gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
   p1, st, err = cv2.calcOpticalFlowPyrLK(old_gray, frame_gray, p0, None, **lk_params)
@@ -163,7 +167,7 @@ while True:
   dist=(p1-p0_backup_preshaped)
   dist = dist*dist
 
-  
+
   distA1 = sum(dist[0][0])
   distB1 = sum(dist[1][0])
   distC1 = sum(dist[2][0])
@@ -179,7 +183,8 @@ while True:
   distC = distC2 + distC1
   distD = distD2 + distD1
 
-  classfier(distA,distB,distC,distD)
+  classfier(distA,distB,distC,distD,column=1)
+  classfier(distA,distB,distC,distD,column=2)
 
 
   p0 = p1_new.reshape(len(p1_new.reshape(-1))/2,1,2)

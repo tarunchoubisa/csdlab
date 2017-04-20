@@ -6,21 +6,19 @@ import os,subprocess,sys
 files = os.listdir("videos")
 print "\n".join(files)
 
-
 for file in files:
 
 	cmd = "xterm -e python " + os.getcwd() +  "/" + sys.argv[1] + " " + os.getcwd() + "/videos/" + file
 	print cmd
 	#raw_input()
 	try:
-		subprocess.check_output(cmd,shell=1)
-	except:
-		pass
+		output=subprocess.check_output(cmd,shell=1)
+	except Exception as e:
+		print e
 		sleep(3)
 
 	#raw_input()
 	
-
 
 exit()
 
