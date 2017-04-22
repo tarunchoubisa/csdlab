@@ -89,8 +89,8 @@ def classfier(dA,dB,dC,dD,column=1):
   else:
   	Alldetections=Alldetections2
 
-  if dA+dB+dC+dD > 1000:#3000:
-    if dA + dB > 500:#700:
+  if dA+dB+dC+dD > 3000:
+    if dA + dB > 700:
       print column,"--------->Human",datetime.datetime.now()
       Alldetections.append(Human)
     else:
@@ -152,7 +152,7 @@ while True:
 
     continue
 
-  time.sleep(0.2)
+  #time.sleep(0.2)
   s,frame = cap.read()
   frame_gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
   p1, st, err = cv2.calcOpticalFlowPyrLK(old_gray, frame_gray, p0, None, **lk_params)
