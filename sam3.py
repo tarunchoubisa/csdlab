@@ -3,7 +3,6 @@ import sys
 import numpy as np
 import datetime,time
 
-
 camera_id=sys.argv[1]
 
 try:
@@ -78,6 +77,10 @@ Alldetections1=[]
 Alldetections2=[]
 Alldetections=[]
 
+FinalDetections1=[]
+FinalDetections2=[]
+FinalFrameCount=0
+
 GlobalColumn=1
 decisionFrameCount=0
 
@@ -102,10 +105,22 @@ def classfier(dA,dB,dC,dD,column=1):
 init_points()
 frame_count=0
 
+fps=0
+past=time.time()
+time.sleep(0.1)
+
 
 while True:
+  #time.sleep(0.02)
   frame_count=frame_count+1
   decisionFrameCount=decisionFrameCount+1
+  FinalFrameCount=FinalFrameCount+1
+
+  present = time.time()
+  fps = present-past
+  fps = 1/fps
+  #print "FPS:",fps
+  past = present
 
   if frame_count>=20:
     init_points()
@@ -127,8 +142,10 @@ while True:
     if sum(Alldetections1)==0:
     	pass
     elif sum(Alldetections1)>0:
+    	FinalDetections1.append(sum(Alldetections1))
     	print "1.................................. human"
     else:
+    	FinalDetections1.append(sum(Alldetections1))
     	print "1.................................. animal"
 
     Alldetections1=[]
@@ -142,15 +159,26 @@ while True:
     if sum(Alldetections2)==0:
     	pass
     elif sum(Alldetections2)>0:
+    	FinalDetections2.append(sum(Alldetections2))
     	print "2.................................. human"
     else:
+    	FinalDetections2.append(sum(Alldetections2))
     	print "2.................................. animal"
 
-    
     Alldetections2=[]
-
-
     continue
+
+  if FinalFrameCount>60:
+  	discriminant = sum(FinalDetections1) + sum(FinalDetections2)
+  	if discriminant==0:
+  		print ">>> NONE"
+  	elif discriminant>0:
+  		print ">>> HUMAN"
+  	else:
+  		print ">>> ANIMAL"
+  	FinalDetections1=[]
+  	FinalDetections2=[]
+  	FinalFrameCount=0
 
   #time.sleep(0.2)
   s,frame = cap.read()
