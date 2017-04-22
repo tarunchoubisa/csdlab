@@ -19,7 +19,11 @@ for x in range(20):
 
 
 status,lastframe=camera.read()
-lastframe = cv2.cvtColor(lastframe,cv2.COLOR_BGR2GRAY)
+#lastframe = cv2.cvtColor(lastframe,cv2.COLOR_BGR2GRAY)
+lastframe = cv2.cvtColor(lastframe, cv2.COLOR_BGR2YUV)
+y,u,v = cv2.split(lastframe)
+lastframe = y
+lastframe = cv2.medianBlur(lastframe,5)
 
 past = time.time()
 
@@ -32,8 +36,13 @@ while 1:
 
 	status,frame=camera.read()
 
-	frame = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-	 
+	#frame = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+	frame = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
+	y,u,v = cv2.split(frame)
+	frame = y
+	lastframe = cv2.medianBlur(lastframe,5)
+
+	
 	diff=cv2.absdiff(lastframe,frame)
 	
 	###----------------------------- UNCOMMENTING THE FOLLOWING MAKES THIS consequtiveSubtraction ---------------------------
