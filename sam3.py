@@ -77,10 +77,6 @@ Alldetections1=[]
 Alldetections2=[]
 Alldetections=[]
 
-FinalDetections1=[]
-FinalDetections2=[]
-FinalFrameCount=0
-
 GlobalColumn=1
 decisionFrameCount=0
 
@@ -99,6 +95,16 @@ def classfier(dA,dB,dC,dD,column=1):
     else:
       print column,"=========>Animal",datetime.datetime.now()
       Alldetections.append(Animal)
+  else:
+  	Alldetections.append(0)
+
+
+def correlate(A,B):
+	if len(A)==len(B):
+		pass
+	else:
+		return numpy.array([0]*3*len(A))
+	A
 
 
 
@@ -114,7 +120,7 @@ while True:
   #time.sleep(0.02)
   frame_count=frame_count+1
   decisionFrameCount=decisionFrameCount+1
-  FinalFrameCount=FinalFrameCount+1
+  
 
   present = time.time()
   fps = present-past
@@ -122,63 +128,6 @@ while True:
   #print "FPS:",fps
   past = present
 
-  if frame_count>=20:
-    init_points()
-    mask = np.copy(mask_blank)
-    frame_count=0
-
-    if decisionFrameCount<=40:
-    	continue
-    else:
-    	decisionFrameCount=0
-    	pass
-
-    print Alldetections1,len(Alldetections1),"\n",Alldetections2,len(Alldetections2)
-
-    if len(Alldetections1)<3 and len(Alldetections2)<3:
-    	continue
-
-    
-    if sum(Alldetections1)==0:
-    	pass
-    elif sum(Alldetections1)>0:
-    	FinalDetections1.append(sum(Alldetections1))
-    	print "1.................................. human"
-    else:
-    	FinalDetections1.append(sum(Alldetections1))
-    	print "1.................................. animal"
-
-    Alldetections1=[]
-    
-
-    #for 2nd colunm
-
-    if len(Alldetections2)<3:
-    	continue
-
-    if sum(Alldetections2)==0:
-    	pass
-    elif sum(Alldetections2)>0:
-    	FinalDetections2.append(sum(Alldetections2))
-    	print "2.................................. human"
-    else:
-    	FinalDetections2.append(sum(Alldetections2))
-    	print "2.................................. animal"
-
-    Alldetections2=[]
-    continue
-
-  if FinalFrameCount>60:
-  	discriminant = sum(FinalDetections1) + sum(FinalDetections2)
-  	if discriminant==0:
-  		print ">>> NONE"
-  	elif discriminant>0:
-  		print ">>> HUMAN"
-  	else:
-  		print ">>> ANIMAL"
-  	FinalDetections1=[]
-  	FinalDetections2=[]
-  	FinalFrameCount=0
 
   #time.sleep(0.2)
   s,frame = cap.read()
@@ -226,6 +175,7 @@ while True:
   distC2 = sum(dist[6][0])
   distD2 = sum(dist[7][0])
 
+  print frame_count,decisionFrameCount
   #distA = distA2 + distA1
   #distB = distB2 + distB1
   #distC = distC2 + distC1
@@ -236,6 +186,50 @@ while True:
 
 
   p0 = p1_new.reshape(len(p1_new.reshape(-1))/2,1,2)
+
+
+  if frame_count>=15:
+    init_points()
+    mask = np.copy(mask_blank)
+    frame_count=0
+
+    if decisionFrameCount<=30:
+    	continue
+    else:
+    	decisionFrameCount=0
+    	pass
+
+    print Alldetections1,len(Alldetections1),"\n",Alldetections2,len(Alldetections2)
+
+    if len(Alldetections1)<3 and len(Alldetections2)<3:
+    	continue
+
+    
+    if sum(Alldetections1)==0:
+    	pass
+    elif sum(Alldetections1)>0:
+    	print "1.................................. human"
+    else:
+    	print "1.................................. animal"
+
+    Alldetections1=[]
+    
+
+    #for 2nd colunm
+
+    if len(Alldetections2)<3:
+    	continue
+
+    if sum(Alldetections2)==0:
+    	pass
+    elif sum(Alldetections2)>0:
+    	print "2.................................. human"
+    else:
+    	print "2.................................. animal"
+
+    Alldetections2=[]
+    continue
+
 
   if cv2.waitKey(1) & 0xff == ord('q'):
   	break
