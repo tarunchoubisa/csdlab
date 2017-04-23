@@ -76,6 +76,7 @@ Animal=-1
 Alldetections1=[]
 Alldetections2=[]
 Alldetections=[]
+AlldetectionsWindowSize=100
 
 GlobalColumn=1
 decisionFrameCount=0
@@ -98,14 +99,42 @@ def classfier(dA,dB,dC,dD,column=1):
   else:
   	Alldetections.append(0)
 
+  if len(Alldetections)>AlldetectionsWindowSize:
+  	Alldetections.pop(0)
+
+
+
+def window_sum(A,window_size=5):
+	Asum = [A[0]]
+
+	for i in range(1,window_size):
+		Asum.append(Asum[-1]+A[i])
+
+	for i in range(window_size,len(A)):
+		Asum.append(Asum[-1]+A[i]-A[i-5])
+
+	return Asum
+
+
+
 
 def correlate(A,B):
 	if len(A)==len(B):
 		pass
 	else:
 		return numpy.array([0]*3*len(A))
-	A
+	
+	A=window_sum(A)
+	B=window_sum(B)
 
+	print A
+	print B
+	corr = np.correlate(A,B,"full")
+	print "corr.",corr
+
+	from matplotlib import pyplot as plt
+	plt.plot(range(len(A)),A,range(len(B)),B,range(len(corr)),corr)
+	plt.show()
 
 
 init_points()
@@ -200,6 +229,11 @@ while True:
     	pass
 
     print Alldetections1,len(Alldetections1),"\n",Alldetections2,len(Alldetections2)
+
+    correlate(Alldetections1,Alldetections2)
+
+    #raw_input()
+    continue
 
     if len(Alldetections1)<3 and len(Alldetections2)<3:
     	continue
