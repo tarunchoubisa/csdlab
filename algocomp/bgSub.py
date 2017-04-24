@@ -31,8 +31,8 @@ fps=0
 decisions = [0]
 frame_counter=0
 
-top_thresh = 30000
-bottom_thresh = 30000
+top_thresh = 40000
+bottom_thresh = 40000
 
 while 1:
 	present = time.time()
@@ -47,7 +47,7 @@ while 1:
 	frame = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
 	y,u,v = cv2.split(frame)
 	frame = y
-	lastframe = cv2.medianBlur(lastframe,5)
+	frame = cv2.medianBlur(frame,5)
 
 	
 	diff=cv2.absdiff(lastframe,frame)
@@ -66,6 +66,7 @@ while 1:
 	bottom=YconstXsum[sumlen/2:]
 
 	top,bottom=sum(top),sum(bottom)
+        print top,bottom
 
 	print "Decision",
 	if(top>top_thresh):

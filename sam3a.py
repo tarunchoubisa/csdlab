@@ -124,8 +124,8 @@ def correlate(A,B):
 	else:
 		return numpy.array([0]*3*len(A))
 	
-	A=window_sum(A)
-	B=window_sum(B)
+	#A=window_sum(A)
+	#B=window_sum(B)
 
 	print A
 	print B
