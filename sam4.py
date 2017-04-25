@@ -80,9 +80,27 @@ Alldetections2=[]
 Alldetections=[]
 AlldetectionsWindowSize=100
 
+
+AlldetectionsX=[]
+AlldetectionsX1=[]
+AlldetectionsX2=[]
+
 GlobalColumn=1
 decisionFrameCount=0
 
+
+def classfierX(dA,dB,dC,dD,column=1):
+  if column==1:
+  	AlldetectionsX=AlldetectionsX1
+  else:
+  	AlldetectionsX=AlldetectionsX2
+
+  AlldetectionsX.append(dB[0])
+  #print(dB[0])
+
+
+  if len(AlldetectionsX)>AlldetectionsWindowSize:
+  	AlldetectionsX.pop(0)
 
 
 def classfier(dA,dB,dC,dD,column=1):
@@ -90,6 +108,7 @@ def classfier(dA,dB,dC,dD,column=1):
   	Alldetections=Alldetections1
   else:
   	Alldetections=Alldetections2
+
 
   '''if dA+dB+dC+dD > 3000:
     if dA + dB > 700:
@@ -102,6 +121,7 @@ def classfier(dA,dB,dC,dD,column=1):
   	Alldetections.append(0)'''
 
   Alldetections.append(dB)
+
 
   if len(Alldetections)>AlldetectionsWindowSize:
   	Alldetections.pop(0)
@@ -126,7 +146,7 @@ def correlate(A,B):
 	if len(A)==len(B):
 		pass
 	else:
-		return numpy.array([0]*3*len(A))
+		return np.array([0]*3*len(A))
 	
 	#A=window_sum(A)
 	#B=window_sum(B)
@@ -138,7 +158,7 @@ def correlate(A,B):
 	rootenergyA= np.sqrt(sum(A*A))
 	rootenergyB= np.sqrt(sum(B*B))
 
-	Ecorr = np.correlate(A,B,"full")/(rootenergyA*rootenergyB)
+	Ecorr = np.correlate(A,B,"full")/(rootenergyA*rootenergyB),np.correlate(A,B,"full")
 	#print "corr.",corr
 
 	return Ecorr
@@ -264,7 +284,7 @@ while True:
 
 
   dist=disp.copy()
-  dist = dist*dist
+  dist = np.sqrt(dist*dist)
 
   distA1 = sum(dist[0][0])
   distB1 = sum(dist[1][0])
@@ -290,6 +310,13 @@ while True:
   classfier(distA1,distB1,distC1,distD1,column=1)
   classfier(distA2,distB2,distC2,distD2,column=2)
 
+  #print dispB1[0],dispB2[0]
+
+  classfierX(dispA1,dispB1,dispC1,dispD1,column=1)
+  classfierX(dispA2,dispB2,dispC2,dispD2,column=2)
+
+  #print AlldetectionsX1==AlldetectionsX2
+  #raw_input()
 
   feed(dispB1,dispB2)
 
@@ -312,19 +339,24 @@ while True:
     	decisionFrameCount=0
     	pass
 
-    Ecorr=correlate(Alldetections1,Alldetections2)
+    Ecorr,notNormalisedEcorr=correlate(Alldetections1,Alldetections2)
+    EcorrX,notNormalisedEcorrX=correlate(AlldetectionsX1,AlldetectionsX2)
+
     Dcorr=corrdot(FeedArray1,FeedArray2)
     Vcorr=corrdot(FeedArrayRaw1,FeedArrayRaw2)
 
-    plt.subplot(4,1,1)
+    plt.subplot(6,1,1)
+    plt.axis([0,200,-1,1])
     dplot,=plt.plot(range(len(Dcorr)),Dcorr,'r',label="Dcorr")
     plt.legend([dplot],["D"])
 
-    plt.subplot(4,1,2)
+    plt.subplot(6,1,2)
+    plt.axis([0,200,0,1])
     eplot,=plt.plot(range(len(Ecorr)),Ecorr,'b',label="Ecorr")
     plt.legend([eplot],["E"])
 
-    plt.subplot(4,1,3)
+    plt.subplot(6,1,3)
+    plt.axis([0,200,-1,1])
     cut=min(len(Ecorr),len(Dcorr))
     if cut==len(Ecorr):
     	Dcorr=Dcorr[:cut]
@@ -333,9 +365,20 @@ while True:
     deplot,=plt.plot(range(len(Ecorr)),Ecorr*np.array(Dcorr),'g',label="DEcorr")
     plt.legend([eplot],["D*E"])
 
-    plt.subplot(4,1,4)
-    veplot,=plt.plot(range(len(Vcorr)),Vcorr,'k',label="Vcorr")
-    plt.legend([eplot],["V"])
+    plt.subplot(6,1,4)
+    plt.xlim([0,200])
+    vplot,=plt.plot(range(len(Vcorr)),Vcorr,'k',label="Vcorr")
+    plt.legend([vplot],["V"])
+
+    plt.subplot(6,1,5)
+    plt.xlim([0,200])
+    enonormplot,=plt.plot(range(len(notNormalisedEcorr)),notNormalisedEcorr,'c',label="notNormEcorr")
+    plt.legend([enonormplot],["E no norm."])
+
+    plt.subplot(6,1,6)
+    plt.xlim([0,200])
+    eXplot,=plt.plot(range(len(notNormalisedEcorrX)),notNormalisedEcorrX,'m',label="EX")
+    plt.legend([eXplot],["EX"])
 
     plt.show()
 
