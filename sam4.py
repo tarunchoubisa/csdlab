@@ -171,9 +171,9 @@ def feed(A,B):
 		FeedArray2.pop(0)
 
 	if len(FeedArrayRaw1)>FeedSize:
-		FeedArray1.pop(0)
+		FeedArrayRaw1.pop(0)
 	if len(FeedArrayRaw2)>FeedSize:
-		FeedArray2.pop(0)
+		FeedArrayRaw2.pop(0)
 
 def corrdot(FA1,FA2):
 	lenFA1 = len(FA1)
