@@ -91,7 +91,7 @@ def classfier(dA,dB,dC,dD,column=1):
   else:
   	Alldetections=Alldetections2
 
-  if dA+dB+dC+dD > 3000:
+  '''if dA+dB+dC+dD > 3000:
     if dA + dB > 700:
       print column,"--------->Human",datetime.datetime.now()
       Alldetections.append(Human)
@@ -99,7 +99,9 @@ def classfier(dA,dB,dC,dD,column=1):
       print column,"=========>Animal",datetime.datetime.now()
       Alldetections.append(Animal)
   else:
-  	Alldetections.append(0)
+  	Alldetections.append(0)'''
+
+  Alldetections.append(dB)
 
   if len(Alldetections)>AlldetectionsWindowSize:
   	Alldetections.pop(0)
@@ -126,23 +128,40 @@ def correlate(A,B):
 	else:
 		return numpy.array([0]*3*len(A))
 	
-	A=window_sum(A)
-	B=window_sum(B)
+	#A=window_sum(A)
+	#B=window_sum(B)
 
-	print A
-	print B
-	corr = np.correlate(A,B,"full")
-	print "corr.",corr
+	#print A
+	#print B
+	A=np.array(A)
+	B=np.array(B)
+	rootenergyA= np.sqrt(sum(A*A))
+	rootenergyB= np.sqrt(sum(B*B))
 
-	from matplotlib import pyplot as plt
-	plt.plot(range(len(A)),A,range(len(B)),B,range(len(corr)),corr)
-	plt.show()
+	Ecorr = np.correlate(A,B,"full")/(rootenergyA*rootenergyB)
+	#print "corr.",corr
+
+	return Ecorr
+
+	#from matplotlib import pyplot as plt
+	#plt.plot(range(len(A)),A,range(len(B)),B,range(len(corr)),corr)
+	#plt.show()
 
 
 FeedArray1=[]
 FeedArray2=[]
 FeedSize=100
+
+FeedArrayRaw1=[]
+FeedArrayRaw2=[]
+
 def feed(A,B):
+	FeedArrayRaw1.append(A)
+	FeedArrayRaw2.append(B)
+
+	A=A/np.sqrt(sum(A*A))
+	B=B/np.sqrt(sum(B*B))
+
 	FeedArray1.append(A)
 	FeedArray2.append(B)
 
@@ -151,7 +170,31 @@ def feed(A,B):
 	if len(FeedArray2)>FeedSize:
 		FeedArray2.pop(0)
 
-	return np.array(FeedArray1)*np.array(FeedArray2)
+	if len(FeedArrayRaw1)>FeedSize:
+		FeedArray1.pop(0)
+	if len(FeedArrayRaw2)>FeedSize:
+		FeedArray2.pop(0)
+
+def corrdot(FA1,FA2):
+	lenFA1 = len(FA1)
+	extend = np.array([[0,0]]*(lenFA1))
+	
+	modFA1 = np.append(extend,FA1,axis=0)
+	modFA1 = np.append(modFA1,extend,axis=0)
+
+	Vcorr=[]
+
+	print lenFA1
+	#raw_input()
+
+	for i in range(len(modFA1)-lenFA1):
+		x=modFA1[i:i+lenFA1]
+		#print x
+		#print FeedArray2
+		#raw_input()
+		Vcorr.append(sum(sum(x*FA2))/lenFA1)
+
+	return Vcorr
 
 
 
@@ -210,41 +253,52 @@ while True:
     img = cv2.add(frame,mask)
     cv2.imshow('frame',img)
 
-  dist=(p1-p0_backup_preshaped)
+  disp=(p1-p0_backup_preshaped)
   #dist = dist*dist
+
+  p0 = p1_new.reshape(len(p1_new.reshape(-1))/2,1,2)
 
   if cv2.waitKey(1) & 0xff == ord('q'):
   	break
 
 
-  dispA1 = dist[0][0]
-  dispB1 = dist[1][0]
-  dispC1 = dist[2][0]
-  dispD1 = dist[3][0]
 
-  dispA2 = dist[4][0]
-  dispB2 = dist[5][0]
-  dispC2 = dist[6][0]
-  dispD2 = dist[7][0]
+  dist=disp.copy()
+  dist = dist*dist
 
-  innerProductA = feed(dispA1,dispA2)
+  distA1 = sum(dist[0][0])
+  distB1 = sum(dist[1][0])
+  distC1 = sum(dist[2][0])
+  distD1 = sum(dist[3][0])
 
-  plt.plot(range(len(innerProductA)),innerProductA)
-  plt.show()
+  distA2 = sum(dist[4][0])
+  distB2 = sum(dist[5][0])
+  distC2 = sum(dist[6][0])
+  distD2 = sum(dist[7][0])
 
-  continue
 
-  print frame_count,decisionFrameCount
-  #distA = distA2 + distA1
-  #distB = distB2 + distB1
-  #distC = distC2 + distC1
-  #distD = distD2 + distD1
+  dispA1 = disp[0][0]
+  dispB1 = disp[1][0]
+  dispC1 = disp[2][0]
+  dispD1 = disp[3][0]
+
+  dispA2 = disp[4][0]
+  dispB2 = disp[5][0]
+  dispC2 = disp[6][0]
+  dispD2 = disp[7][0]
 
   classfier(distA1,distB1,distC1,distD1,column=1)
   classfier(distA2,distB2,distC2,distD2,column=2)
 
 
-  p0 = p1_new.reshape(len(p1_new.reshape(-1))/2,1,2)
+  feed(dispB1,dispB2)
+
+  print frame_count,decisionFrameCount
+
+  #classfier(distA1,distB1,distC1,distD1,column=1)
+  #classfier(distA2,distB2,distC2,distD2,column=2)
+
+
 
 
   if frame_count>=15:
@@ -258,11 +312,33 @@ while True:
     	decisionFrameCount=0
     	pass
 
-    print Alldetections1,len(Alldetections1),"\n",Alldetections2,len(Alldetections2)
+    Ecorr=correlate(Alldetections1,Alldetections2)
+    Dcorr=corrdot(FeedArray1,FeedArray2)
+    Vcorr=corrdot(FeedArrayRaw1,FeedArrayRaw2)
 
-    correlate(Alldetections1,Alldetections2)
+    plt.subplot(4,1,1)
+    dplot,=plt.plot(range(len(Dcorr)),Dcorr,'r',label="Dcorr")
+    plt.legend([dplot],["D"])
 
-    #raw_input()
+    plt.subplot(4,1,2)
+    eplot,=plt.plot(range(len(Ecorr)),Ecorr,'b',label="Ecorr")
+    plt.legend([eplot],["E"])
+
+    plt.subplot(4,1,3)
+    cut=min(len(Ecorr),len(Dcorr))
+    if cut==len(Ecorr):
+    	Dcorr=Dcorr[:cut]
+    else:
+    	Ecorr=Ecorr[:cut]
+    deplot,=plt.plot(range(len(Ecorr)),Ecorr*np.array(Dcorr),'g',label="DEcorr")
+    plt.legend([eplot],["D*E"])
+
+    plt.subplot(4,1,4)
+    veplot,=plt.plot(range(len(Vcorr)),Vcorr,'k',label="Vcorr")
+    plt.legend([eplot],["V"])
+
+    plt.show()
+
     continue
 
     if len(Alldetections1)<3 and len(Alldetections2)<3:
