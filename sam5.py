@@ -298,11 +298,15 @@ while True:
     	pass
 
 
-    #DispFeedsLAB=
-    #DispFeedsRAB=
+    DispFeedsLAB=np.append(np.array(DispFeedsLA),np.array(DispFeedsLB),axis=1)
+    DispFeedsRAB=np.append(np.array(DispFeedsRA),np.array(DispFeedsRB),axis=1)
 
-    #DispFeedsLCD=
-    #DispFeedsRCD=
+    DispFeedsLCD=np.append(np.array(DispFeedsLC),np.array(DispFeedsLD),axis=1)
+    DispFeedsRCD=np.append(np.array(DispFeedsRC),np.array(DispFeedsRD),axis=1)
+
+    VcorrAB=VectorCorr(DispFeedsLAB,DispFeedsRAB)
+    VcorrCD=VectorCorr(DispFeedsLCD,DispFeedsRCD)
+    
 
     VcorrA=VectorCorr(DispFeedsLA,DispFeedsRA,normalise=1)
     EcorrA=Corr(DistFeedsLA,DistFeedsRA)
@@ -367,9 +371,19 @@ while True:
     plt.legend([ed],["ED"])
 
 
+    #plt.show()
+
+    plt.subplot(2,1,1)
+    plt.axis([0,200,-1,1])
+    vab,=plt.plot(range(len(VcorrAB)),VcorrAB,'r')
+    plt.legend([vab],["VAB"])
+
+    plt.subplot(2,1,2)
+    plt.axis([0,200,-1,1])
+    vcd,=plt.plot(range(len(VcorrCD)),VcorrCD,'b')
+    plt.legend([vcd],["VCD"])
 
     plt.show()
-
 
     continue
 
