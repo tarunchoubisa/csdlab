@@ -195,7 +195,7 @@ def feed(A,B):
 	if len(FeedArrayRaw2)>FeedSize:
 		FeedArrayRaw2.pop(0)
 
-def corrdot(FA1,FA2):
+def corrdot(FA1,FA2,raw=0):
 	lenFA1 = len(FA1)
 	extend = np.array([[0,0]]*(lenFA1))
 	
@@ -204,7 +204,13 @@ def corrdot(FA1,FA2):
 
 	Vcorr=[]
 
-	print lenFA1
+	FA1=np.array(FA1)
+	FA2=np.array(FA2)
+
+	energy = np.sqrt(sum(sum(FA1*FA1)) * sum(sum(FA2*FA2)))
+
+
+	#print lenFA1
 	#raw_input()
 
 	for i in range(len(modFA1)-lenFA1):
@@ -212,8 +218,12 @@ def corrdot(FA1,FA2):
 		#print x
 		#print FeedArray2
 		#raw_input()
-		Vcorr.append(sum(sum(x*FA2))/lenFA1)
-
+		if not raw:
+			Vcorr.append(sum(sum(x*FA2))/lenFA1)
+		else:
+			#raw_input()
+			#exit()
+			Vcorr.append(sum(sum(x*FA2))/energy)
 	return Vcorr
 
 
@@ -343,19 +353,22 @@ while True:
     EcorrX,notNormalisedEcorrX=correlate(AlldetectionsX1,AlldetectionsX2)
 
     Dcorr=corrdot(FeedArray1,FeedArray2)
-    Vcorr=corrdot(FeedArrayRaw1,FeedArrayRaw2)
+    Vcorr=corrdot(FeedArrayRaw1,FeedArrayRaw2,raw=1)
 
-    plt.subplot(6,1,1)
+    '''plt.subplot(6,1,1)
     plt.axis([0,200,-1,1])
     dplot,=plt.plot(range(len(Dcorr)),Dcorr,'r',label="Dcorr")
     plt.legend([dplot],["D"])
+	'''
 
-    plt.subplot(6,1,2)
+    #plt.subplot(6,1,2)
+    plt.subplot(2,1,1)
+
     plt.axis([0,200,0,1])
     eplot,=plt.plot(range(len(Ecorr)),Ecorr,'b',label="Ecorr")
     plt.legend([eplot],["E"])
 
-    plt.subplot(6,1,3)
+    '''plt.subplot(6,1,3)
     plt.axis([0,200,-1,1])
     cut=min(len(Ecorr),len(Dcorr))
     if cut==len(Ecorr):
@@ -364,22 +377,25 @@ while True:
     	Ecorr=Ecorr[:cut]
     deplot,=plt.plot(range(len(Ecorr)),Ecorr*np.array(Dcorr),'g',label="DEcorr")
     plt.legend([eplot],["D*E"])
+	'''
 
-    plt.subplot(6,1,4)
-    plt.xlim([0,200])
+    plt.subplot(2,1,2)
+    #plt.xlim([0,200])
+    plt.axis([0,200,-1,1])
     vplot,=plt.plot(range(len(Vcorr)),Vcorr,'k',label="Vcorr")
     plt.legend([vplot],["V"])
 
-    plt.subplot(6,1,5)
+    '''plt.subplot(6,1,5)
     plt.xlim([0,200])
     enonormplot,=plt.plot(range(len(notNormalisedEcorr)),notNormalisedEcorr,'c',label="notNormEcorr")
     plt.legend([enonormplot],["E no norm."])
-
+	
     plt.subplot(6,1,6)
     plt.xlim([0,200])
     eXplot,=plt.plot(range(len(notNormalisedEcorrX)),notNormalisedEcorrX,'m',label="EX")
     plt.legend([eXplot],["EX"])
-
+	'''
+	
     plt.show()
 
     continue
