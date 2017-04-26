@@ -298,6 +298,12 @@ while True:
     	pass
 
 
+    #DispFeedsLAB=
+    #DispFeedsRAB=
+
+    #DispFeedsLCD=
+    #DispFeedsRCD=
+
     VcorrA=VectorCorr(DispFeedsLA,DispFeedsRA,normalise=1)
     EcorrA=Corr(DistFeedsLA,DistFeedsRA)
 
