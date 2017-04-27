@@ -3,12 +3,15 @@ from time import sleep
 
 import os,subprocess,sys
 
-files = os.listdir("videos")
+file2run=sys.argv[1]
+folder2find=sys.argv[2]
+
+files = os.listdir(folder2find)
 print "\n".join(files)
 
 for file in files:
 
-	cmd = "xterm -e python " + os.getcwd() +  "/" + sys.argv[1] + " " + os.getcwd() + "/videos/" + file
+	cmd = "xterm -e python " + os.getcwd() +  "/" + file2run + " " + os.getcwd() + "/%s/" % folder2find + file
 	print cmd
 	#raw_input()
 	try:

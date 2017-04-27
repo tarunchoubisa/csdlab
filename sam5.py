@@ -320,7 +320,7 @@ while True:
     VcorrD=VectorCorr(DispFeedsLD,DispFeedsRD,normalise=1)
     EcorrD=Corr(DistFeedsLD,DistFeedsRD)
 
-
+    '''
     plt.subplot(4,2,1)
     plt.axis([0,200,-1,1])
     va,=plt.plot(range(len(VcorrA)),VcorrA,'r')
@@ -369,19 +369,77 @@ while True:
     plt.axis([0,200,-1,1])
     ed,=plt.plot(range(len(EcorrD)),EcorrD,'c')
     plt.legend([ed],["ED"])
-
+    '''
 
     #plt.show()
 
-    plt.subplot(2,1,1)
+    #plt.figure(figsize=(10,10))
+
+    plt.subplot(10,1,1)
     plt.axis([0,200,-1,1])
     vab,=plt.plot(range(len(VcorrAB)),VcorrAB,'r')
     plt.legend([vab],["VAB"])
 
-    plt.subplot(2,1,2)
+    plt.subplot(10,1,2)
     plt.axis([0,200,-1,1])
     vcd,=plt.plot(range(len(VcorrCD)),VcorrCD,'b')
     plt.legend([vcd],["VCD"])
+
+    plt.subplot(10,1,3)
+    #plt.axis([0,200,-1,1])
+    alx,=plt.plot(range(len(DispFeedsLA)),np.array(DispFeedsLA)[:,0],'k')
+    arx,=plt.plot(range(len(DispFeedsRA)),np.array(DispFeedsRA)[:,0],'c')
+    plt.legend([alx,arx],["alx","arx"])
+    
+    plt.subplot(10,1,4)
+    aly,=plt.plot(range(len(DispFeedsLA)),np.array(DispFeedsLA)[:,1],'k')
+    ary,=plt.plot(range(len(DispFeedsRA)),np.array(DispFeedsRA)[:,1],'c')
+    plt.legend([aly,ary],["aly","ary"])
+
+    plt.subplot(10,1,5)
+    #plt.axis([0,200,-1,1])
+    blx,=plt.plot(range(len(DispFeedsLB)),np.array(DispFeedsLB)[:,0],'k')
+    brx,=plt.plot(range(len(DispFeedsRB)),np.array(DispFeedsRB)[:,0],'c')
+    plt.legend([blx,brx],["blx","brx"])
+
+    
+    plt.subplot(10,1,6)
+    bly,=plt.plot(range(len(DispFeedsLB)),np.array(DispFeedsLB)[:,1],'k')
+    bry,=plt.plot(range(len(DispFeedsRB)),np.array(DispFeedsRB)[:,1],'c')
+    plt.legend([bly,bry],["bly","bry"])
+
+
+
+    plt.subplot(10,1,7)
+    #plt.axis([0,200,-1,1])
+    clx,=plt.plot(range(len(DispFeedsLC)),np.array(DispFeedsLC)[:,0],'k')
+    crx,=plt.plot(range(len(DispFeedsRC)),np.array(DispFeedsRC)[:,0],'c')
+    plt.legend([clx,crx],["clx","crx"])
+
+
+    
+    plt.subplot(10,1,8)
+    cly,=plt.plot(range(len(DispFeedsLC)),np.array(DispFeedsLC)[:,1],'k')
+    cry,=plt.plot(range(len(DispFeedsRC)),np.array(DispFeedsRC)[:,1],'c')
+    plt.legend([cly,cry],["cly","cry"])
+
+
+
+    plt.subplot(10,1,9)
+    #plt.axis([0,200,-1,1])
+    dlx,=plt.plot(range(len(DispFeedsLD)),np.array(DispFeedsLD)[:,0],'k')
+    drx,=plt.plot(range(len(DispFeedsRD)),np.array(DispFeedsRD)[:,0],'c')
+    plt.legend([dlx,drx],["dlx","drx"])
+
+    
+    plt.subplot(10,1,10)
+    dly,=plt.plot(range(len(DispFeedsLD)),np.array(DispFeedsLD)[:,1],'k')
+    dry,=plt.plot(range(len(DispFeedsRD)),np.array(DispFeedsRD)[:,1],'c')
+    plt.legend([dly,dry],["dly","dry"])
+
+  
+
+    #plt.legend([ed],["ED"])
 
     plt.show()
 
