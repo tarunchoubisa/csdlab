@@ -298,11 +298,20 @@ while True:
     	pass
 
 
-    DispFeedsLAB=np.append(np.array(DispFeedsLA),np.array(DispFeedsLB),axis=1)
-    DispFeedsRAB=np.append(np.array(DispFeedsRA),np.array(DispFeedsRB),axis=1)
+    #DispFeedsLAB=np.append(np.array(DispFeedsLA),np.array(DispFeedsLB),axis=1)
+    #DispFeedsRAB=np.append(np.array(DispFeedsRA),np.array(DispFeedsRB),axis=1)
 
-    DispFeedsLCD=np.append(np.array(DispFeedsLC),np.array(DispFeedsLD),axis=1)
-    DispFeedsRCD=np.append(np.array(DispFeedsRC),np.array(DispFeedsRD),axis=1)
+    
+    #DispFeedsLCD=np.append(np.array(DispFeedsLC),np.array(DispFeedsLD),axis=1)
+    #DispFeedsRCD=np.append(np.array(DispFeedsRC),np.array(DispFeedsRD),axis=1)
+
+    DispFeedsLAB=np.array(zip(np.array(DispFeedsLA)[:,0],np.array(DispFeedsLB)[:,0]))
+    DispFeedsRAB=np.array(zip(np.array(DispFeedsRA)[:,0],np.array(DispFeedsRB)[:,0]))
+
+    DispFeedsLCD=np.array(zip(np.array(DispFeedsLC)[:,0],np.array(DispFeedsLD)[:,0]))
+    DispFeedsRCD=np.array(zip(np.array(DispFeedsRC)[:,0],np.array(DispFeedsRD)[:,0]))
+
+
 
     VcorrAB=VectorCorr(DispFeedsLAB,DispFeedsRAB)
     VcorrCD=VectorCorr(DispFeedsLCD,DispFeedsRCD)

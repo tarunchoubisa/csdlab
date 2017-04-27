@@ -16,13 +16,20 @@ except:
 cap = cv2.VideoCapture(camera_id)
 
 for x in range(50):
-  cap.read()
+  ret,frame=cap.read()
+  #cv2.imshow("Inital Flush",frame)
+  #cv2.waitKey(1)
+
+#raw_input()
+#cv2.destroyAllWindows()
 
 s,frame = cap.read()
-old_gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+#old_gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
 
-height,width,channels = frame.shape
-
+try:
+  height,width,channels = frame.shape
+except:
+  print "Exception in frame.shape"
 
 # params for ShiTomasi corner detection
 feature_params = dict( maxCorners = 100,
@@ -41,7 +48,12 @@ mask = np.zeros_like(frame)
 
 # Take first frame and find corners in it
 ret, old_frame = cap.read()
-old_gray = cv2.cvtColor(old_frame, cv2.COLOR_BGR2GRAY)
+try:
+  old_gray = cv2.cvtColor(old_frame, cv2.COLOR_BGR2GRAY)
+except:
+  print "Exception in converting to gray"
+  old_gray=frame
+
 p0 = cv2.goodFeaturesToTrack(old_gray, mask = None, **feature_params)
 xtemp = p0[0]
 
@@ -242,7 +254,12 @@ while True:
 
   #time.sleep(0.2)
   s,frame = cap.read()
-  frame_gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+  try:
+    frame_gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+  except:
+    print "Exception in converting to gray"
+    frame_gray=frame
+
   p1, st, err = cv2.calcOpticalFlowPyrLK(old_gray, frame_gray, p0, None, **lk_params)
   old_gray = frame_gray.copy()
 
@@ -285,7 +302,7 @@ while True:
 
   #print frame_count,decisionFrameCount
 
-  #time.sleep(0.1)
+
   if frame_count>=15:
     init_points()
     mask = np.copy(mask_blank)
@@ -320,7 +337,7 @@ while True:
     VcorrD=VectorCorr(DispFeedsLD,DispFeedsRD,normalise=1)
     EcorrD=Corr(DistFeedsLD,DistFeedsRD)
 
-    '''
+    
     plt.subplot(4,2,1)
     plt.axis([0,200,-1,1])
     va,=plt.plot(range(len(VcorrA)),VcorrA,'r')
@@ -369,11 +386,13 @@ while True:
     plt.axis([0,200,-1,1])
     ed,=plt.plot(range(len(EcorrD)),EcorrD,'c')
     plt.legend([ed],["ED"])
-    '''
+    
 
     #plt.show()
 
-    plt.figure(figsize=(10,10))
+    #plt.figure(figsize=(10,10))
+
+    '''
 
     plt.subplot(10,1,1)
     plt.axis([0,200,-1,1])
@@ -437,7 +456,7 @@ while True:
     dry,=plt.plot(range(len(DispFeedsRD)),np.array(DispFeedsRD)[:,1],'c')
     plt.legend([dly,dry],["dly","dry"])
 
-  
+    '''
 
     #plt.legend([ed],["ED"])
 
