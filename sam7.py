@@ -88,7 +88,7 @@ def init_points():
 
 #########################
 
-FeedSizeMAX=100
+FeedSizeMAX=150
 
 DistFeedsLA=[]
 DistFeedsLB=[]
@@ -302,8 +302,15 @@ while True:
 
   #print frame_count,decisionFrameCount
 
+  maxDispXaxis=max(np.abs(disp[:,0,0]))
+  if maxDispXaxis>100 or frame_count>=FeedSizeMAX:
+    #raw_input()
+    init_points()
+    mask = np.copy(mask_blank)
+    frame_count=0
 
-  if frame_count>=15:
+  #make this if redundant
+  if True or frame_count>=15:
     init_points()
     mask = np.copy(mask_blank)
     frame_count=0
@@ -339,51 +346,59 @@ while True:
 
     
     plt.subplot(4,2,1)
-    plt.axis([0,200,-1,1])
+    #plt.axis([0,200,-1,1])
+    plt.ylim(-1,1)
     va,=plt.plot(range(len(VcorrA)),VcorrA,'r')
     plt.legend([va],["VA"])
     #plt.show()
 
     plt.subplot(4,2,3)
-    plt.axis([0,200,-1,1])
+    #plt.axis([0,200,-1,1])
+    plt.ylim(-1,1)
     vb,=plt.plot(range(len(VcorrB)),VcorrB,'b')
     plt.legend([vb],["VB"])
 
     #plt.show()
 
     plt.subplot(4,2,5)
-    plt.axis([0,200,-1,1])
+    #plt.axis([0,200,-1,1])
+    plt.ylim(-1,1)
     vc,=plt.plot(range(len(VcorrC)),VcorrC,'g')
     plt.legend([vc],["VC"])
     #plt.show()
 
     plt.subplot(4,2,7)
-    plt.axis([0,200,-1,1])
+    #plt.axis([0,200,-1,1])
+    plt.ylim(-1,1)
     vd,=plt.plot(range(len(VcorrD)),VcorrD,'c')
     plt.legend([vd],["VD"])
 
 
     
     plt.subplot(4,2,2)
-    plt.axis([0,200,-1,1])
+    #plt.axis([0,200,-1,1])
+    plt.ylim(-1,1)
     ea,=plt.plot(range(len(EcorrA)),EcorrA,'r')
     plt.legend([ea],["EA"])
 
 
     plt.subplot(4,2,4)
-    plt.axis([0,200,-1,1])
+    #plt.axis([0,200,-1,1])
+    plt.ylim(-1,1)
     eb,=plt.plot(range(len(EcorrB)),EcorrB,'b')
     plt.legend([eb],["EB"])
 
 
     plt.subplot(4,2,6)
-    plt.axis([0,200,-1,1])
+    #plt.axis([0,200,-1,1])
+    plt.ylim(-1,1)
     ec,=plt.plot(range(len(EcorrC)),EcorrC,'g')
     plt.legend([ec],["EC"])
 
 
     plt.subplot(4,2,8)
-    plt.axis([0,200,-1,1])
+    #plt.axis([0,200,-1,1])
+    plt.ylim(-1,1)
     ed,=plt.plot(range(len(EcorrD)),EcorrD,'c')
     plt.legend([ed],["ED"])
     
