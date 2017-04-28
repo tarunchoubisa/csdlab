@@ -311,9 +311,9 @@ while True:
 
   #make this if redundant
   if True or frame_count>=15:
-    init_points()
-    mask = np.copy(mask_blank)
-    frame_count=0
+    #init_points()
+    #mask = np.copy(mask_blank)
+    #frame_count=0
 
     if decisionFrameCount<=30:
     	continue
