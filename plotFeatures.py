@@ -19,8 +19,8 @@ while 1:
 	#f2.append(max(features['VcorrCD']))
 	#f1.append(max(features['unEcorrA'])+max(features['unEcorrB']))
 	#f2.append(max(features['unEcorrC'])+max(features['unEcorrD']))
-	f1.append(max(features['unVcorrAB']))
-	f2.append(max(features['unVcorrCD']))
+	f1.append(max(features['VcorrAB']))
+	f2.append(max(features['VcorrCD']))
 	y.append(0)
 
 
@@ -38,13 +38,23 @@ while 1:
 	#f2.append(max(features['VcorrCD']))
 	#f1.append(max(features['unEcorrA'])+max(features['unEcorrB']))
 	#f2.append(max(features['unEcorrC'])+max(features['unEcorrD']))
-	f1.append(max(features['unVcorrAB']))
-	f2.append(max(features['unVcorrCD']))
+	f1.append(max(features['VcorrAB']))
+	f2.append(max(features['VcorrCD']))
 	y.append(1)
 
 #plt.axis([0,50000,0,50000])
 plt.scatter(f1,f2,c=y, cmap=plt.cm.coolwarm)
 plt.show()
+
+data=zip(f1,f2)
+
+print data
+import json
+g=open("CvH_normalised_VAB_VCD.txt",'w')
+g.write(json.dumps(data)+"\n")
+g.write(json.dumps(y))
+g.close()
+
 
 
 
