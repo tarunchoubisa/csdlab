@@ -47,7 +47,7 @@ for i in range(8):
 
 # Define the codec and create VideoWriter object
 fourcc = cv2.cv.CV_FOURCC(*'XVID')
-out = cv2.VideoWriter(opfile,fourcc, 10.0, (640,480))
+out = cv2.VideoWriter(opfile,fourcc, 25.0, (640,480))
 
 
 try:
