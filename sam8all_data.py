@@ -1,5 +1,5 @@
 import cv2
-import sys
+import sys,os
 import numpy as np
 import datetime,time,json
 
@@ -15,7 +15,7 @@ except:
 
 cap = cv2.VideoCapture(camera_id)
 
-for x in range(50):
+for x in range(20):
   cap.read()
 
 s,frame = cap.read()
@@ -227,8 +227,10 @@ past=time.time()
 time.sleep(0.1)
 
 
+frames2skip=0
+
 while True:
-  #time.sleep(0.02)
+  time.sleep(0.01)
   frame_count=frame_count+1
   decisionFrameCount=decisionFrameCount+1
   
@@ -300,7 +302,7 @@ while True:
     #mask = np.copy(mask_blank)
     #frame_count=0
 
-    if decisionFrameCount<=30:
+    if decisionFrameCount<30:
     	continue
     else:
     	decisionFrameCount=0
@@ -339,18 +341,30 @@ while True:
     EcorrD=Corr(DistFeedsLD,DistFeedsRD)
     unEcorrD=Corr(DistFeedsLD,DistFeedsRD,normalise=0)
 
+
+    if not frames2skip==0:
+      print "skipping frames",frames2skip
+      frames2skip -= 1
+      continue
+    else:
+      pass
+
     
 
+    plt.figure(figsize=(10,10))
 
-    '''
+    
     plt.subplot(4,2,1)
     plt.axis([0,200,-1,1])
+    #plt.xlim(0,len(VcorrA))
     va,=plt.plot(range(len(VcorrA)),VcorrA,'r')
     plt.legend([va],["VA"])
     #plt.show()
 
     plt.subplot(4,2,3)
     plt.axis([0,200,-1,1])
+    #plt.xlim(0,len(VcorrB))
+
     vb,=plt.plot(range(len(VcorrB)),VcorrB,'b')
     plt.legend([vb],["VB"])
 
@@ -371,12 +385,16 @@ while True:
     
     plt.subplot(4,2,2)
     plt.axis([0,200,-1,1])
+    #plt.xlim(0,len(EcorrA))
+
     ea,=plt.plot(range(len(EcorrA)),EcorrA,'r')
     plt.legend([ea],["EA"])
 
 
     plt.subplot(4,2,4)
     plt.axis([0,200,-1,1])
+    #plt.xlim(0,len(EcorrB))
+
     eb,=plt.plot(range(len(EcorrB)),EcorrB,'b')
     plt.legend([eb],["EB"])
 
@@ -391,9 +409,13 @@ while True:
     plt.axis([0,200,-1,1])
     ed,=plt.plot(range(len(EcorrD)),EcorrD,'c')
     plt.legend([ed],["ED"])
-    '''
+    
+    try:
+      plt.show()
+    except Exception as e:
+      print e
 
-    #plt.show()
+    
 
     plt.figure(figsize=(10,10))
 
@@ -465,14 +487,60 @@ while True:
 
     #plt.legend([ed],["ED"])
 
-    plt.show()
+    try:
+      plt.show()
+    except Exception as e:
+      print e
+
+
 
     print "Enter category: ",
     category=raw_input()
+    if category=="":
+      category='c'
+
+    elif "skip" in category:
+      try:
+        frames2skip=category.split(" ")[-1]
+        frames2skip=int(frames2skip)
+        continue
+      except Exception as e:
+        print e
+        frames2skip=0
+        
+
+
 
     features={'category':category,
-    'disp':disp.tolist(),
-    'dist':np.sqrt(disp.copy()**2).tolist(),
+
+    'dispLA':np.array(DispFeedsLA).tolist(),
+    'dispLB':np.array(DispFeedsLB).tolist(),
+    'dispLC':np.array(DispFeedsLC).tolist(),
+    'dispLD':np.array(DispFeedsLD).tolist(),
+
+    'dispRA':np.array(DispFeedsRA).tolist(),
+    'dispRB':np.array(DispFeedsRB).tolist(),
+    'dispRC':np.array(DispFeedsRC).tolist(),
+    'dispRD':np.array(DispFeedsRD).tolist(),
+
+
+
+    'distLA':np.array(DistFeedsLA).tolist(),
+    'distLB':np.array(DistFeedsLB).tolist(),
+    'distLC':np.array(DistFeedsLC).tolist(),
+    'distLD':np.array(DistFeedsLD).tolist(),
+
+    'distRA':np.array(DistFeedsRA).tolist(),
+    'distRB':np.array(DistFeedsRB).tolist(),
+    'distRC':np.array(DistFeedsRC).tolist(),
+    'distRD':np.array(DistFeedsRD).tolist(),
+
+    
+
+    #,DispFeedsLB,DispFeedsLC,DispFeedsLD,DispFeedsRA,DispFeedsRB,DispFeedsRC,DispFeedsRD],
+    #'dist':[DistFeedsLA,DistFeedsLB,DistFeedsLC,DistFeedsLD,DistFeedsRA,DistFeedsRB,DistFeedsRC,DistFeedsRD],
+
+
     'VcorrA':VcorrA.tolist(),
     'VcorrB':VcorrB.tolist(),
     'VcorrC':VcorrC.tolist(),
@@ -496,6 +564,12 @@ while True:
     'unEcorrC':unEcorrC.tolist(),
     'unEcorrD':unEcorrD.tolist()
     }
+
+
+    featureDirectory = "extractedFeatures"
+
+    if not os.path.exists(featureDirectory):
+      os.mkdir(featureDirectory)
 
     
     with open("extractedFeatures/%s.txt" % camera_id.split("/")[-1],'a+') as f:
