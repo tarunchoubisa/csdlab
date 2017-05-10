@@ -1,5 +1,5 @@
 import cv2
-import sys,os
+import sys,os,json
 import numpy as np
 import datetime,time,json
 
@@ -15,10 +15,37 @@ except:
 
 cap = cv2.VideoCapture(camera_id)
 
-for x in range(20):
+for x in range(9):
   cap.read()
 
+
 s,frame = cap.read()
+
+### FOR CONSECUTIVE SUBTRACTION ###
+
+lastframe=frame
+#lastframe = cv2.cvtColor(lastframe,cv2.COLOR_BGR2GRAY)
+lastframe = cv2.cvtColor(lastframe, cv2.COLOR_BGR2YUV)
+y,u,v = cv2.split(lastframe)
+lastframe = y
+lastframe = cv2.medianBlur(lastframe,5)
+
+ht,wt=y.shape
+
+
+frames_elapsed=0
+feat_vec=[]
+
+
+#tagFolder="bgsubTAGS"
+
+
+#if not os.path.exists(tagFolder):
+#  os.mkdir(tagFolder)
+
+### FOR CONSECUTIVE SUBTRACTION ###
+
+
 old_gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
 
 height,width,channels = frame.shape
@@ -28,7 +55,7 @@ height,width,channels = frame.shape
 feature_params = dict( maxCorners = 100,
                        qualityLevel = 0.3,
                        minDistance = 7,
-                       blockSize = 7 )
+                       blockSize = 7)
 # Parameters for lucas kanade optical flow
 lk_params = dict( winSize  = (31,31),
                   maxLevel = 2,
@@ -96,11 +123,16 @@ DispFeedsRB=[]
 DispFeedsRC=[]
 DispFeedsRD=[]
 
-def feed(disp):
+
+BGSubFeeds=[]
+
+def feed(disp,bgsubfeature):
   feed.size+=1
 
   #print feed.size
   #raw_input()
+
+  BGSubFeeds.append(bgsubfeature)
   
   dispLA = disp[0][0]
   dispLB = disp[1][0]
@@ -168,6 +200,8 @@ def feed(disp):
     DistFeedsRC.pop(0)
     DistFeedsRD.pop(0)
 
+    BGSubFeeds.pop(0)
+
  #print (feed.size),len(DispFeedsLA)
 feed.size=0
 
@@ -229,8 +263,12 @@ time.sleep(0.1)
 
 frames2skip=0
 
+
+FRAMES_ELAPSED=0  # TAKE CARE OF THE FRAMES WASTED FROM THE VIDEO IN THE BEGINGING- currently 10
+
 while True:
   time.sleep(0.01)
+  FRAMES_ELAPSED+=1
   frame_count=frame_count+1
   decisionFrameCount=decisionFrameCount+1
   
@@ -244,6 +282,95 @@ while True:
 
   #time.sleep(0.2)
   s,frame = cap.read()
+  if not s:
+    break
+
+  ### BG SUBTRATION ###
+  yuvframe = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
+  y,u,v = cv2.split(yuvframe)
+  yframe = cv2.medianBlur(y,5)
+  ydiff=cv2.absdiff(lastframe,yframe)
+
+  ###----------------------------- UNCOMMENTING THE FOLLOWING MAKES THIS consequtiveSubtraction ---------------------------
+  lastframe=yframe
+
+  ret,ythresh = cv2.threshold(ydiff,50,255,cv2.THRESH_BINARY)
+
+  cv2.imshow("yframe from yuv",yframe)
+  cv2.imshow("thresh",ythresh)
+
+
+
+  #########################################################
+  #                           #                           #
+  #             LA            #           RA              #
+  #                           #                           #
+  #########################################################
+  #                           #                           #
+  #             LB            #           RB              #
+  #                           #                           #
+  #########################################################
+  #                           #                           #
+  #             LC            #           RC              #
+  #                           #                           #
+  #########################################################
+  #                           #                           #
+  #             LD            #           RD              #
+  #                           #                           #
+  #########################################################
+
+
+  frame2slice=ythresh
+
+  sliceLA=frame2slice[:ht/4,:wt/2]
+  sliceRA=frame2slice[:ht/4,wt/2:]
+
+  sliceLB=frame2slice[ht/4:ht/2,:wt/2]
+  sliceRB=frame2slice[ht/4:ht/2,wt/2:]
+
+  sliceLC=frame2slice[ht/2:3*ht/4,:wt/2]
+  sliceRC=frame2slice[ht/2:3*ht/4,wt/2:]
+
+  sliceLD=frame2slice[3*ht/4:,:wt/2]
+  sliceRD=frame2slice[3*ht/4:,wt/2:]
+
+  cv2.imshow("sliceLA",sliceLA)
+  cv2.imshow("sliceRA",sliceRA)
+
+  cv2.imshow("sliceLB",sliceLB)
+  cv2.imshow("sliceRB",sliceRB)
+
+  cv2.imshow("sliceLC",sliceLC)
+  cv2.imshow("sliceRC",sliceRC)
+
+  cv2.imshow("sliceLD",sliceLD)
+  cv2.imshow("sliceRD",sliceRD)
+
+
+  sliceELA=sum(sum(sliceLA))
+  sliceERA=sum(sum(sliceRA))
+
+  sliceELB=sum(sum(sliceLB))
+  sliceERB=sum(sum(sliceRB))
+
+  sliceELC=sum(sum(sliceLC))
+  sliceERC=sum(sum(sliceRC))
+
+  sliceELD=sum(sum(sliceLD))
+  sliceERD=sum(sum(sliceRD))
+
+
+  BGSUBfeatr={'sliceELA':sliceELA,'sliceERA':sliceERA,'sliceELB':sliceELB,'sliceERB':sliceERB,'sliceELC':sliceELC,'sliceERC':sliceERC,'sliceELD':sliceELD,'sliceERD':sliceERD}
+
+  #for key in featr:
+  #  print key,featr[key]
+
+
+
+  ### BG SUBTRATION ###
+
+
+
   frame_gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
   p1, st, err = cv2.calcOpticalFlowPyrLK(old_gray, frame_gray, p0, None, **lk_params)
   old_gray = frame_gray.copy()
@@ -283,7 +410,7 @@ while True:
   	break
 
 
-  feed(disp)
+  feed(disp,BGSUBfeatr)
 
   #print frame_count,decisionFrameCount
 
@@ -341,6 +468,8 @@ while True:
     EcorrD=Corr(DistFeedsLD,DistFeedsRD)
     unEcorrD=Corr(DistFeedsLD,DistFeedsRD,normalise=0)
 
+
+    '''
 
     if not frames2skip==0:
       print "skipping frames",frames2skip
@@ -509,9 +638,11 @@ while True:
         frames2skip=0
         
 
+    '''
 
-
-    features={'category':category,
+    features={#'category':category,
+    'frame':FRAMES_ELAPSED,
+    'BGSubFeat':BGSubFeeds,
 
     'dispLA':np.array(DispFeedsLA).tolist(),
     'dispLB':np.array(DispFeedsLB).tolist(),
@@ -575,13 +706,18 @@ while True:
     with open("extractedFeatures/%s.txt" % camera_id.split("/")[-1],'a+') as f:
       f.write(json.dumps(features) + "\r\n")
 
+
+    '''
     with open("extractedFeatures/%s.txt" % category,'a+') as f:
       f.write(json.dumps(features) + "\r\n")
+
+    '''
 
     continue
 
     
-
+with open("log.txt",'a+') as f:
+  f.write(camera_id + "," + str(FRAMES_ELAPSED) +"\r\n")
 
 print "END"
 #raw_input()
